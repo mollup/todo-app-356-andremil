@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>StudyTracker – Puerto Rico Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      :root {
+        --pr-red: #ed1c24;
+        --pr-blue: #0050a0;
+        --pr-white: #ffffff;
+        --pr-sand: #f7e7c1;
+        --pr-dark: #1b1b1b;
+        --pr-green: #1c8e4c;
+        --radius-lg: 18px;
+        --radius-md: 10px;
+        --shadow-soft: 0 12px 30px rgba(0, 0, 0, 0.16);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: radial-gradient(circle at top left, #ffe8e5, #fefaf5 40%, #e0f0ff 100%);
+        color: var(--pr-dark);
+        display: flex;
+        align-items: stretch;
+        justify-content: center;
+      }
+
+      .app {
+        max-width: 1100px;
+        width: 100%;
+        margin: 32px;
+        background: rgba(255, 255, 255, 0.96);
+        border-radius: 26px;
+        box-shadow: var(--shadow-soft);
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: minmax(0, 3fr) minmax(0, 2.4fr);
+      }
+
+      @media (max-width: 900px) {
+        .app {
+          grid-template-columns: 1fr;
+          margin: 16px;
+        }
+      }
+
+      .hero {
+        padding: 28px 32px 28px 32px;
+        background: linear-gradient(
+            135deg,
+            rgba(0, 80, 160, 0.9),
+            rgba(237, 28, 36, 0.92)
+          ),
+          url("https://images.pexels.com/photos/416676/pexels-photo-416676.jpeg?auto=compress&cs=tinysrgb&w=800")
+            center/cover no-repeat;
+        color: var(--pr-white);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        inset: 16px -40px auto auto;
+        height: 140px;
+        background:
+          linear-gradient(to right, var(--pr-blue) 0 34%, transparent 34% 40%, var(--pr-red) 40% 100%);
+        opacity: 0.18;
+        transform: skewX(-18deg);
+      }
+
+      .hero-header {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+      }
+
+      .title-block h1 {
+        margin: 0;
+        font-size: 1.8rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .title-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.12);
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .flag-icon {
+        width: 12px;
+        height: 12px;
+        border-radius: 3px;
+        /* Horizontal red–white–red stripes for Puerto Rico flag */
+        background: linear-gradient(
+          to bottom,
+          var(--pr-red) 0 33%,
+          var(--pr-white) 33% 66%,
+          var(--pr-red) 66% 100%
+        );
+        position: relative;
+        overflow: hidden;
+      }
+
+      .flag-icon::before {
+        /* Blue triangle on the hoist side */
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 0;
+        height: 0;
+        border-top: 6px solid transparent;
+        border-bottom: 6px solid transparent;
+        border-right: 9px solid var(--pr-blue);
+      }
+
+      .hero-subtitle {
+        margin-top: 6px;
+        font-size: 0.95rem;
+        opacity: 0.96;
+      }
+
+      .hero-badge {
+        background: rgba(255, 255, 255, 0.18);
+        border-radius: 14px;
+        padding: 10px 14px;
+        font-size: 0.8rem;
+        max-width: 220px;
+        backdrop-filter: blur(8px);
+      }
+
+      .hero-badge strong {
+        display: block;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .hero-badge span {
+        display: block;
+        margin-top: 4px;
+      }
+
+      .hero-grid {
+        position: relative;
+        z-index: 1;
+        margin-top: 18px;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        font-size: 0.8rem;
+      }
+
+      .hero-card {
+        background: rgba(255, 255, 255, 0.14);
+        border-radius: 14px;
+        padding: 8px 10px;
+      }
+
+      .hero-card-label {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.7rem;
+        opacity: 0.9;
+      }
+
+      .hero-card-value {
+        margin-top: 4px;
+        font-size: 0.95rem;
+        font-weight: 600;
+      }
+
+      .main {
+        padding: 22px 24px 20px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .section-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0 0 4px 0;
+      }
+
+      .section-subtitle {
+        margin: 0 0 12px 0;
+        font-size: 0.82rem;
+        color: #5b5b5b;
+      }
+
+      .card {
+        background: var(--pr-white);
+        border-radius: var(--radius-lg);
+        padding: 14px 14px 12px 14px;
+        border: 1px solid rgba(0, 0, 0, 0.04);
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      @media (max-width: 720px) {
+        .form-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      label {
+        display: block;
+        font-size: 0.75rem;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #626262;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 7px 9px;
+        border-radius: 9px;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        font-size: 0.85rem;
+        outline: none;
+        transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
+        background: #fbfbfb;
+      }
+
+      input:focus,
+      select:focus {
+        border-color: var(--pr-blue);
+        box-shadow: 0 0 0 1px rgba(0, 80, 160, 0.2);
+        background: #ffffff;
+      }
+
+      .button-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      button {
+        border-radius: 999px;
+        border: none;
+        padding: 7px 14px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: transform 0.1s, box-shadow 0.1s, background-color 0.15s, opacity 0.15s;
+      }
+
+      button:active {
+        transform: translateY(1px) scale(0.99);
+        box-shadow: none;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--pr-blue), #0075ff);
+        color: var(--pr-white);
+        box-shadow: 0 6px 18px rgba(0, 80, 160, 0.4);
+      }
+
+      .btn-secondary {
+        background: #fff5f2;
+        color: var(--pr-red);
+        border: 1px solid rgba(237, 28, 36, 0.28);
+      }
+
+      .btn-ghost {
+        background: transparent;
+        color: #444;
+      }
+
+      .btn-reset {
+        background: linear-gradient(135deg, #ff9f1c, #ff4040);
+        color: var(--pr-white);
+        box-shadow: 0 6px 18px rgba(255, 120, 40, 0.45);
+      }
+
+      .pill {
+        border-radius: 999px;
+        padding: 2px 8px;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .pill-live {
+        background: rgba(0, 176, 80, 0.1);
+        color: var(--pr-green);
+      }
+
+      .pill-paused {
+        background: rgba(0, 0, 0, 0.05);
+        color: #555;
+      }
+
+      .status-line {
+        margin-top: 8px;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #555;
+      }
+
+      .status-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 999px;
+        background: #ccc;
+      }
+
+      .status-dot.live {
+        background: var(--pr-green);
+      }
+
+      .status-dot.idle {
+        background: #999;
+      }
+
+      .status-dot.error {
+        background: var(--pr-red);
+      }
+
+      .error-line {
+        margin-top: 4px;
+        font-size: 0.78rem;
+        color: var(--pr-red);
+        min-height: 1em;
+      }
+
+      .sidebar {
+        padding: 18px 18px 16px 18px;
+        border-left: 1px solid rgba(0, 0, 0, 0.04);
+        background: radial-gradient(circle at top, #fff3ec 0, #fefcf9 55%, #f3f8ff 100%);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .stats-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 8px;
+      }
+
+      .stats-summary {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+        margin-top: 6px;
+      }
+
+      .mini-pill {
+        font-size: 0.7rem;
+        border-radius: 999px;
+        padding: 3px 7px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: rgba(0, 0, 0, 0.03);
+      }
+
+      .stats-scroll {
+        flex: 1;
+        min-height: 120px;
+        max-height: 300px;
+        overflow: auto;
+        padding-right: 4px;
+      }
+
+      .subject-card {
+        background: rgba(255, 255, 255, 0.94);
+        border-radius: var(--radius-md);
+        padding: 8px 10px;
+        margin-bottom: 7px;
+        border-left: 4px solid var(--pr-blue);
+        font-size: 0.82rem;
+      }
+
+      .subject-card:nth-child(3n + 2) {
+        border-left-color: var(--pr-red);
+      }
+
+      .subject-card:nth-child(3n + 3) {
+        border-left-color: var(--pr-green);
+      }
+
+      .subject-name {
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+      }
+
+      .subject-chip {
+        font-size: 0.7rem;
+        background: rgba(0, 0, 0, 0.03);
+        border-radius: 999px;
+        padding: 2px 6px;
+      }
+
+      .subject-meta {
+        margin-top: 4px;
+        display: flex;
+        justify-content: space-between;
+        gap: 6px;
+      }
+
+      .subject-meta span {
+        font-size: 0.76rem;
+        color: #555;
+      }
+
+      .json-view {
+        margin-top: 6px;
+        background: #081221;
+        color: #e7f2ff;
+        border-radius: 10px;
+        padding: 8px 9px;
+        font-family: "SF Mono", ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+          monospace;
+        font-size: 0.75rem;
+        overflow: auto;
+        max-height: 180px;
+      }
+
+      .hint {
+        font-size: 0.72rem;
+        color: #666;
+        margin-top: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <section class="hero">
+        <div class="hero-header">
+          <div class="title-block">
+            <div class="title-tag">
+              <span class="flag-icon"></span>
+              StudyTracker
+              <span style="opacity: 0.8">Puerto Rico</span>
+            </div>
+            <h1>
+              Focus en Borinquen
+            </h1>
+            <p class="hero-subtitle">
+              Start, end, and reset study sessions while watching your stats update in real time.
+            </p>
+          </div>
+          <div class="hero-badge">
+            <strong>Live Playground</strong>
+            <span>Use this page to manually test all StudyTracker features.</span>
+          </div>
+        </div>
+
+        <div class="hero-grid">
+          <div class="hero-card">
+            <div class="hero-card-label">Today vibe</div>
+            <div class="hero-card-value">Café, brisa y concentración</div>
+          </div>
+          <div class="hero-card">
+            <div class="hero-card-label">Theme</div>
+            <div class="hero-card-value">Puerto Rican palette</div>
+          </div>
+          <div class="hero-card">
+            <div class="hero-card-label">Mode</div>
+            <div class="hero-card-value">Manual testing lab</div>
+          </div>
+        </div>
+      </section>
+
+      <main class="main">
+        <section class="card">
+          <p class="section-title">Create & control session</p>
+          <p class="section-subtitle">
+            Use these controls to call <code>startStudying</code>, <code>endStudying</code>,
+            <code>reset</code>, and <code>getStats</code> on a real <code>StudyTracker</code> instance.
+          </p>
+
+          <div class="form-grid">
+            <div>
+              <label for="dateInput">Date</label>
+              <input id="dateInput" type="date" />
+            </div>
+            <div>
+              <label for="timeInput">Time</label>
+              <input id="timeInput" type="time" />
+            </div>
+            <div>
+              <label for="subjectInput">Subject</label>
+              <input id="subjectInput" type="text" placeholder="e.g., Cálculo, Historia de PR" />
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button id="startBtn" class="btn-primary">
+              ▶ Start studying
+            </button>
+            <button id="endBtn" class="btn-secondary">
+              ⏹ End studying
+            </button>
+            <button id="statsBtn" class="btn-ghost">
+              📊 Get stats
+            </button>
+            <button id="resetBtn" class="btn-reset">
+              🔁 Reset tracker
+            </button>
+          </div>
+
+          <div class="status-line">
+            <span id="statusDot" class="status-dot idle"></span>
+            <span id="statusText">Tracker ready. No active session.</span>
+            <span id="livePill" class="pill pill-paused">Idle</span>
+          </div>
+          <div id="errorText" class="error-line"></div>
+          <p class="hint">
+            Tip: Date/time default to “now” when clicking Start/End if left empty. Reset wipes all stats and
+            active sessions.
+          </p>
+        </section>
+
+        <section class="sidebar">
+          <div class="stats-header">
+            <div>
+              <p class="section-title">Current stats</p>
+              <p class="section-subtitle">Aggregated time per subject from <code>getStats()</code>.</p>
+            </div>
+            <div class="mini-pill">
+              Overall:
+              <span id="overallHours">0 h</span>
+            </div>
+          </div>
+
+          <div class="stats-summary">
+            <div class="mini-pill">
+              ⏱
+              <span id="overallMinutes">0 min</span>
+            </div>
+            <div class="mini-pill">
+              📚
+              <span id="subjectCount">0 subjects</span>
+            </div>
+            <div class="mini-pill">
+              🎓
+              <span id="sessionCount">0 sessions</span>
+            </div>
+          </div>
+
+          <div class="stats-scroll" id="subjectsContainer"></div>
+
+          <div class="json-view" id="jsonView"></div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Load the library -->
+    <script src="./studyTracker.js"></script>
+    <script>
+      (function () {
+        const tracker =
+          (window.StudyTrackerLib && window.StudyTrackerLib.createStudyTracker()) || null;
+        const dateInput = document.getElementById("dateInput");
+        const timeInput = document.getElementById("timeInput");
+        const subjectInput = document.getElementById("subjectInput");
+        const startBtn = document.getElementById("startBtn");
+        const endBtn = document.getElementById("endBtn");
+        const statsBtn = document.getElementById("statsBtn");
+        const resetBtn = document.getElementById("resetBtn");
+        const statusDot = document.getElementById("statusDot");
+        const statusText = document.getElementById("statusText");
+        const livePill = document.getElementById("livePill");
+        const errorText = document.getElementById("errorText");
+        const subjectsContainer = document.getElementById("subjectsContainer");
+        const jsonView = document.getElementById("jsonView");
+        const overallHours = document.getElementById("overallHours");
+        const overallMinutes = document.getElementById("overallMinutes");
+        const subjectCount = document.getElementById("subjectCount");
+        const sessionCount = document.getElementById("sessionCount");
+
+        function nowDateStr() {
+          const d = new Date();
+          const y = d.getFullYear();
+          const m = String(d.getMonth() + 1).padStart(2, "0");
+          const day = String(d.getDate()).padStart(2, "0");
+          return `${y}-${m}-${day}`;
+        }
+
+        function nowTimeStr() {
+          const d = new Date();
+          const hh = String(d.getHours()).padStart(2, "0");
+          const mm = String(d.getMinutes()).padStart(2, "0");
+          return `${hh}:${mm}`;
+        }
+
+        function setStatus(mode, message) {
+          statusDot.classList.remove("live", "idle", "error");
+          livePill.classList.remove("pill-live", "pill-paused");
+          errorText.textContent = "";
+
+          if (mode === "live") {
+            statusDot.classList.add("live");
+            livePill.classList.add("pill-live");
+            livePill.textContent = "Studying";
+          } else if (mode === "idle") {
+            statusDot.classList.add("idle");
+            livePill.classList.add("pill-paused");
+            livePill.textContent = "Idle";
+          } else if (mode === "error") {
+            statusDot.classList.add("error");
+            livePill.classList.add("pill-paused");
+            livePill.textContent = "Check input";
+          }
+
+          statusText.textContent = message;
+        }
+
+        function setError(err) {
+          if (!err) {
+            errorText.textContent = "";
+            return;
+          }
+          errorText.textContent = err.message || String(err);
+        }
+
+        function updateStatsView() {
+          if (!tracker) {
+            jsonView.textContent = "StudyTrackerLib not found. Make sure studyTracker.js is loaded.";
+            subjectsContainer.innerHTML = "";
+            return;
+          }
+
+          const stats = tracker.getStats();
+          jsonView.textContent = JSON.stringify(stats, null, 2);
+
+          const subjects = stats.subjects || {};
+          const subjectKeys = Object.keys(subjects);
+
+          subjectCount.textContent = `${subjectKeys.length} subject${
+            subjectKeys.length === 1 ? "" : "s"
+          }`;
+          sessionCount.textContent = `${stats.overall.sessionCount || 0} session${
+            stats.overall.sessionCount === 1 ? "" : "s"
+          }`;
+
+          const oh = stats.overall.totalHours || 0;
+          const om = stats.overall.totalMinutes || 0;
+          overallHours.textContent = `${oh.toFixed(2)} h`;
+          overallMinutes.textContent = `${om.toFixed(0)} min`;
+
+          subjectsContainer.innerHTML = "";
+          subjectKeys.forEach((key) => {
+            const s = subjects[key];
+            const el = document.createElement("div");
+            el.className = "subject-card";
+            el.innerHTML = `
+              <div class="subject-name">
+                <span>${key === "" ? "<i>(no subject)</i>" : key}</span>
+                <span class="subject-chip">${s.totalHours.toFixed(2)} h</span>
+              </div>
+              <div class="subject-meta">
+                <span>${s.totalMinutes.toFixed(0)} min · ${s.sessionCount} session${
+              s.sessionCount === 1 ? "" : "s"
+            }</span>
+                <span>${s.totalDays.toFixed(3)} days</span>
+              </div>
+            `;
+            subjectsContainer.appendChild(el);
+          });
+        }
+
+        function ensureDateTimeInputs() {
+          if (!dateInput.value) dateInput.value = nowDateStr();
+          if (!timeInput.value) timeInput.value = nowTimeStr();
+        }
+
+        if (!tracker) {
+          setStatus("error", "Could not create StudyTracker. Check script loading.");
+          jsonView.textContent =
+            "window.StudyTrackerLib was not found. Make sure index.html and studyTracker.js are in the same folder.";
+          return;
+        }
+
+        setStatus("idle", "Tracker ready. No active session.");
+        updateStatsView();
+
+        startBtn.addEventListener("click", () => {
+          try {
+            ensureDateTimeInputs();
+            tracker.startStudying(dateInput.value, timeInput.value, subjectInput.value);
+            setStatus(
+              "live",
+              `Studying "${subjectInput.value || "(no subject)"}" since ${dateInput.value} ${
+                timeInput.value
+              }.`
+            );
+            setError(null);
+          } catch (e) {
+            setStatus("error", "Could not start session.");
+            setError(e);
+          }
+        });
+
+        endBtn.addEventListener("click", () => {
+          try {
+            ensureDateTimeInputs();
+            tracker.endStudying(dateInput.value, timeInput.value);
+            setStatus("idle", "Session ended. You can start another one.");
+            setError(null);
+            updateStatsView();
+          } catch (e) {
+            setStatus("error", "Could not end session.");
+            setError(e);
+          }
+        });
+
+        statsBtn.addEventListener("click", () => {
+          try {
+            updateStatsView();
+            setStatus("idle", "Stats refreshed from getStats().");
+            setError(null);
+          } catch (e) {
+            setStatus("error", "Could not get stats.");
+            setError(e);
+          }
+        });
+
+        resetBtn.addEventListener("click", () => {
+          try {
+            tracker.reset();
+            setStatus("idle", "Tracker reset. All sessions cleared.");
+            setError(null);
+            updateStatsView();
+          } catch (e) {
+            setStatus("error", "Could not reset tracker.");
+            setError(e);
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
+
